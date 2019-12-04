@@ -8,6 +8,8 @@ const App = () => {
         { name: 'Arto Hellas' }
     ])
     const [newName, setNewName] = useState('TestiNimi')
+    console.log('Name is ', setNewName)
+    console.log('Name is ', newName)
 
 
 
@@ -16,7 +18,7 @@ const App = () => {
             <h2>Puhelinluettelo</h2>
             <form>
                 <div>
-                    debug: {newName}
+                    debug: {newName}             
                 </div>
 
                 <div>
