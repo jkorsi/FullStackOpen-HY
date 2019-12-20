@@ -20,16 +20,23 @@ const App = () => {
     const [newPhone, setPhone] = useState('')
     const [filterValue, setFilter] = useState('')
 
-    // TOIMII - ÄLÄ KOSKE 
-    let personsListToShow = personsList
+    const personsListToShow = personsList
+
     // TOIMII - ÄLÄ KOSKE 
     const handlePersonsChange = (event) => {
         setName(event.target.value)
     }
+
     // TOIMII - ÄLÄ KOSKE 
     const handlePhoneChange = (event) => {
         setPhone(event.target.value)
     }
+
+    //TOIMII - ÄLÄ KOSKE
+    const handleFilterChange = (event) => {
+        setFilter(event.target.value)       
+    }
+
     // TOIMII - ÄLÄ KOSKE 
     const addPersonAndNumber = (event) => {
         event.preventDefault()
@@ -46,34 +53,18 @@ const App = () => {
             setPhone('')
         }
     }
-
-                    const checkFilter = (person) => {
-                        const tempFilter = filterValue.toLowerCase()
-                        const idLowerCase = (person.id).toLowerCase()
-                        console.log(person.id, idLowerCase)
-                        return idLowerCase.includes(tempFilter)
-                    }
-
-                    const handleFilterChange = (event) => {
-                        event.preventDefault()
-                        setFilter(event.target.value)       
-
-                        console.log('Before filter ',personsListToShow)
-
-                        // ------------ WORK ------------
-                        personsListToShow = personsList.filter(person => checkFilter(person) )
-                        // ------------ WORK ------------
-
-                        console.log('After filter ', personsListToShow)
-                    }
-
-    // TOIMII - ÄLÄ KOSKE 
+    
+    //TOIMII - ÄLÄ KOSKE
     const returnRows = () => {
-        return personsListToShow.map(person =>
-            <Person
-                key={person.id}
-                person={person}
-        /> )
+        return personsListToShow.filter(person =>
+            person.id.includes(filterValue.toLowerCase())).map(filteredPerson => {
+                return(
+                <Person
+                    key={filteredPerson.id}
+                    person={filteredPerson}
+                />
+                )
+            })
     }
 
     // TOIMII - ÄLÄ KOSKE 
@@ -87,14 +78,12 @@ const App = () => {
 
             <form onSubmit={addPersonAndNumber}>
                 <div style={{padding:10}}>
-                    Nimi: <input value={newName}
-                        onChange={handlePersonsChange} /
-                    >    
+                    Nimi: <input value={newName} 
+                    onChange={handlePersonsChange} />    
                 </div>
                 <div style={{padding:10}}>
                     Puhelinnumero: <input value={newPhone}
-                        onChange={handlePhoneChange} /
-                    >
+                    onChange={handlePhoneChange} />
                 </div>
                 <div>
                     <br></br>
