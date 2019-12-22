@@ -49,8 +49,7 @@ const Total = (props) => {
 
     const exercArray = props.exercises.map(exercObj => {
         return exercObj.exercises
-    }
-    )
+    })
 
     const amount = exercArray.reduce(function (accumulator, currentValue) {
         return accumulator + currentValue;

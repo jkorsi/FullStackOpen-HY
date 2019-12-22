@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
-import { ReactDOM, render } from 'react-dom';
+import { ReactDOM, render } from 'react-dom'
 import Person from './components/Person'
+import Filter from './components/Filter'
+import FilteredRows from './components/FilteredRows'
+import Inputs from './components/Inputs'
+
 import './App.css';
 
 const App = () => {
@@ -12,15 +16,15 @@ const App = () => {
         { id: 'Dan Abramov', number: '12-43-234345' },
         { id: 'Mary Poppendieck', number: '39-23-6423122' }
     ])
-  
-    console.log('Initial list: ',personsList)
+
+    console.log('Initial list: ', personsList)
 
     // State Variable initialized with place holder
     const [newName, setName] = useState('')
     const [newPhone, setPhone] = useState('')
     const [filterValue, setFilter] = useState('')
 
-    const personsListToShow = personsList
+    const filteredRows = personsList
 
     // TOIMII - ÄLÄ KOSKE 
     const handlePersonsChange = (event) => {
@@ -34,16 +38,16 @@ const App = () => {
 
     //TOIMII - ÄLÄ KOSKE
     const handleFilterChange = (event) => {
-        setFilter(event.target.value)       
+        setFilter(event.target.value)
     }
 
     // TOIMII - ÄLÄ KOSKE 
     const addPersonAndNumber = (event) => {
         event.preventDefault()
 
-        if (personsList.filter(person => person.id === newName).length > 0) {
+        if (personsList.filter(person => person.id.toLowerCase() === newName.toLowerCase()).length > 0) {
             alert(`Nimi "${newName}" on jo varattu!!!`)
-        }else{
+        } else {
             const personObject = {
                 id: newName,
                 number: newPhone
@@ -53,48 +57,41 @@ const App = () => {
             setPhone('')
         }
     }
-    
-    //TOIMII - ÄLÄ KOSKE
-    const returnRows = () => {
-        return personsListToShow.filter(person =>
-            person.id.includes(filterValue.toLowerCase())).map(filteredPerson => {
-                return(
-                <Person
-                    key={filteredPerson.id}
-                    person={filteredPerson}
-                />
-                )
-            })
-    }
 
-    // TOIMII - ÄLÄ KOSKE 
+    const newLocal = <form onSubmit={addPersonAndNumber}>
+        <div style={{ padding: 10 }}>
+            Nimi: <input value={newName} onChange={handlePersonsChange} />
+        </div>
+        <div style={{ padding: 10 }}>
+            Puhelinnumero: <input value={newPhone} onChange={handlePhoneChange} />
+        </div>
+        <div>
+            <br></br>
+            <button type="submit">Lisää</button>
+        </div>
+    </form>
+    // Refaktoroi komponentit omiin tiedostoihin
     return (
         <div>
             <h2>Puhelinluettelo</h2>
-            <div style={{padding:10}}>
-                Filtteri: <input value={filterValue}
-                onChange={handleFilterChange}/>
-            </div>
-
-            <form onSubmit={addPersonAndNumber}>
-                <div style={{padding:10}}>
-                    Nimi: <input value={newName} 
-                    onChange={handlePersonsChange} />    
-                </div>
-                <div style={{padding:10}}>
-                    Puhelinnumero: <input value={newPhone}
-                    onChange={handlePhoneChange} />
-                </div>
-                <div>
-                    <br></br>
-                    <button type="submit">Lisää</button>
-                </div>
-            </form> 
-
-             <h2>Numerot</h2>
+            <Filter
+                filterValue={filterValue}
+                handleFilterChange={handleFilterChange} 
+            />
+            <Inputs
+                addPersonAndNumber={addPersonAndNumber}
+                newName={newName}
+                handlePersonsChange={handlePersonsChange}
+                newPhone={newPhone}
+                handlePhoneChange={handlePhoneChange}
+            />
+            <h2>Numerot</h2>
             <ul>
-                {returnRows()}
-            </ul>         
+                <FilteredRows
+                    filterValue={filterValue}
+                    filteredRows={filteredRows}
+                />
+            </ul>
         </div>
     )
 }
