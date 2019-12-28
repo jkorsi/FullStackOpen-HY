@@ -1,20 +1,20 @@
 import React from 'react'
-import Person from './Person'
 import Filter from './Filter'
+import Country from './CountryAbstract'
 
   //TOIMII - ÄLÄ KOSKE
   const FilteredRows = (props) => {
       console.log('Filtered rows propsit: ',props)
-    return props.filteredRows.filter(person =>
-        person.id.toLowerCase().includes(props.filterValue.toLowerCase())).map(filteredPerson => {
+    return props.filteredRows.filter(country =>
+        country.id.toLowerCase().includes(props.filterValue.toLowerCase())).map(filteredCountry => {
             return (
                 //Komponentti
-                <Person
+                <Country
                     //Tämän perusteella komponentit erotellaan arrayssa
-                    key={filteredPerson.id}
+                    key={filteredCountry.name}
 
                     //Tämä sisältö näytetään
-                    person={filteredPerson}
+                    country={filteredCountry}
                 />
             )
         })

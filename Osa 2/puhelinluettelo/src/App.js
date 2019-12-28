@@ -1,21 +1,18 @@
-import React, { useState } from 'react'
-import { ReactDOM, render } from 'react-dom'
-import Person from './components/Person'
+import React, { useState , useEffect} from 'react'
+
 import Filter from './components/Filter'
 import FilteredRows from './components/FilteredRows'
 import Inputs from './components/Inputs'
+import Person from './components/Person'
+
+import axios from 'axios'
 
 import './App.css';
 
 const App = () => {
 
     // State list variable --, with a place holder name in it
-    const [personsList, setpersonsList] = useState([
-        { id: 'Arto Hellas', number: '040-123456' },
-        { id: 'Ada Lovelace', number: '39-44-5323523' },
-        { id: 'Dan Abramov', number: '12-43-234345' },
-        { id: 'Mary Poppendieck', number: '39-23-6423122' }
-    ])
+    const [personsList, setpersonsList] = useState([])
 
     console.log('Initial list: ', personsList)
 
@@ -25,6 +22,20 @@ const App = () => {
     const [filterValue, setFilter] = useState('')
 
     const filteredRows = personsList
+    const personsLink = 'http://localhost:3030/persons'
+
+    const hook = () => {
+      console.log('effect')
+      axios
+        .get(personsLink)
+        .then(response => {
+          console.log('promise fulfilled')
+          console.log(response.data)
+          setpersonsList(response.data)
+        })
+    }
+    
+    useEffect(hook, [])
 
     // TOIMII - ÄLÄ KOSKE 
     const handlePersonsChange = (event) => {
