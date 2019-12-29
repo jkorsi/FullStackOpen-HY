@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 
 import Filter from './components/Filter'
 import FilteredRows from './components/FilteredRows'
-import Language from './components/Language'
-import Languages from './components/Languages'
-import Country from './components/Country'
 
 import axios from 'axios'
 
@@ -32,7 +29,6 @@ const App = () =>
       .then( response =>
       {
         console.log( 'promise fulfilled' )
-        console.log( response.data )
         setCountryData( response.data )
       } )
   }
@@ -49,12 +45,12 @@ const App = () =>
         handleFilterChange={ handleFilterChange }
       />
       <h1>Maan tiedot</h1>
-      <ul>
+      <div>
         <FilteredRows
           filterValue={ filterValue }
           filteredRows={ countryData }
         />
-      </ul>
+      </div>
     </div>
   )
 }
