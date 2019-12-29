@@ -44,6 +44,9 @@ const App = () =>
         filterValue={ filterValue }
         handleFilterChange={ handleFilterChange }
       />
+      <button onClick={ () => window.location.reload() }>
+        Lataa uudelleen
+                    </button>
       <h1>Maan tiedot</h1>
       <div>
         <FilteredRows
