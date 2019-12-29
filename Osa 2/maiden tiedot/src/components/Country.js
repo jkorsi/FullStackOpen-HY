@@ -17,6 +17,11 @@ const Country = ( { country } ) =>
                     languages={ country.languages }
                 />
             </ul>
+            <br></br>
+            <img
+                style={ { width: 150, height: 90 } }
+                src={ country.flag }
+                alt="Country flag" />
         </div>
     )
 
