@@ -1,23 +1,47 @@
 import React from 'react'
 import Filter from './Filter'
-import Country from './CountryAbstract'
+import Country from './Country'
+import CountrySimple from './CountrySimple'
 
-  //TOIMII - ÄLÄ KOSKE
-  const FilteredRows = (props) => {
-      console.log('Filtered rows propsit: ',props)
-    return props.filteredRows.filter(country =>
-        country.id.toLowerCase().includes(props.filterValue.toLowerCase())).map(filteredCountry => {
+//TOIMII - ÄLÄ KOSKE
+const FilteredRows = ( props ) =>
+{
+    const filtered = props.filteredRows.filter( country =>
+        country.name.toLowerCase().includes( props.filterValue.toLowerCase() ) )
+
+    console.log( 'Filtered rows propsit: ', props )
+    console.log( 'FilteredRows length: ', props.filteredRows.length )
+    console.log( 'Filtered length: ', filtered.length )
+
+    if ( filtered.length > 1 )
+    {
+
+        console.log( '2' )
+        return filtered.map( filteredCountry =>
+        {
             return (
-                //Komponentti
-                <Country
-                    //Tämän perusteella komponentit erotellaan arrayssa
-                    key={filteredCountry.name}
-
-                    //Tämä sisältö näytetään
-                    country={filteredCountry}
+                <CountrySimple
+                    key={ filteredCountry.name }
+                    country={ filteredCountry }
                 />
             )
-        })
+        }
+        )
+    } else if ( filtered.length = 1 )
+    {
+        console.log( '1' )
+        return filtered.map( filteredCountry =>
+        {
+            return (
+                <Country
+                    key={ filteredCountry.name }
+                    country={ filteredCountry }
+                />
+            )
+        } )
+
+    }
+
 }
 
 export default FilteredRows
