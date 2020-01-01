@@ -1,5 +1,7 @@
 import React from 'react'
 import Languages from './Languages'
+import Weather from './Weather'
+
 
 const Country = ( { country } ) =>
 {
@@ -7,9 +9,9 @@ const Country = ( { country } ) =>
         <div>
             <h1>{ country.name }</h1>
             <div>
-                Capital: { country.capital }
+                Pääkaupunki: { country.capital }
                 <br></br>
-                Population: { country.population }
+                Väkiluku: { country.population }
             </div>
             <h2>Languages: </h2>
             <ul>
@@ -22,6 +24,14 @@ const Country = ( { country } ) =>
                 style={ { width: 150, height: 90 } }
                 src={ country.flag }
                 alt="Country flag" />
+            <br></br>
+            <div>
+                <Weather
+                    capital={ country.capital }
+                    isoCode={ country.alpha2Code }
+                />
+            </div>
+
         </div>
     )
 

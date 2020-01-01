@@ -7,7 +7,7 @@ const FilteredRows = ( props ) =>
     const [ filter, setFilter ] = useState( '' )
     const [ showAll, setShowAll ] = useState( true )
 
-    if ( props.filterValue != filter && showAll )
+    if ( props.filterValue !== filter && showAll )
     {
         setFilter( props.filterValue )
     }
