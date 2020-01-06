@@ -1,40 +1,39 @@
 import React, { useState, useEffect } from 'react'
 
 import Filter from './components/Filter'
-import FilteredRows from './components/FilteredRows'
+import PersonsList from './components/PersonsList'
 import Inputs from './components/Inputs'
 import Person from './components/Person'
+import getAll from './services/getData'
+import addData from './services/addData'
+import deleteData from './services/deleteData'
+import updateData from './services/updateData'
 
 import axios from 'axios'
 
 import './App.css';
 
+
 const App = () =>
 {
 
-    // State list variable --, with a place holder name in it
-    const [ personsList, setpersonsList ] = useState( [] )
-
-    console.log( 'Initial list: ', personsList )
-
-    // State Variable initialized with place holder
+    // Tilamuuttujat
+    const [ personsList, setPersonsList ] = useState( [] )
     const [ newName, setName ] = useState( '' )
     const [ newPhone, setPhone ] = useState( '' )
     const [ filterValue, setFilter ] = useState( '' )
 
     const filteredRows = personsList
-    const personsLink = 'http://localhost:3100/persons'
+    const personsLink = 'http://localhost:3300/persons'
 
+    //Efekti, jolla noudetaan henkilölista ja asetetaan se tilamuuttujaan
     const hook = () =>
     {
-        console.log( 'effect' )
-        axios
-            .get( personsLink )
-            .then( response =>
+        getAll()
+            .then( initialPersons =>
             {
-                console.log( 'promise fulfilled' )
-                console.log( response.data )
-                setpersonsList( response.data )
+                console.log( 'Promise fulfilled' )
+                setPersonsList( initialPersons )
             } )
     }
 
@@ -65,39 +64,63 @@ const App = () =>
 
         if ( personsList.filter( person => person.id.toLowerCase() === newName.toLowerCase() ).length > 0 )
         {
-            alert( `Nimi "${ newName }" on jo varattu!!!` )
+            if ( window.confirm( `Henkilö ${ newName } on jo olemassa. Päivitetäänkö numero?` ) )
+            {
+                //const person = personsList.filter( person => person.id.toLowerCase() === newName.toLowerCase() )
+                const id = newName
+                const url = `http://localhost:3300/persons/${ id }`
+                const personToUpdate = personsList.find( person => person.id === id )
+                console.log( personToUpdate )
+                const changedPerson = { ...personToUpdate, number: newPhone }
+                console.log( changedPerson )
+
+                updateData( id, changedPerson )
+                    .then( changedPerson =>
+                    {
+                        setPersonsList( personsList.map( person => person.id !== id ? person : changedPerson ) )
+                        setName( '' )
+                        setPhone( '' )
+                    } )
+                    .catch( error =>
+                    {
+                        alert( `Henkilö ${ id } on poistettu palvelimelta. :( Kokeile lisätä henkilö uudelleen!` )
+                        setPersonsList( personsList.map( person => person.id !== id ) )
+                    } )
+
+            }
         } else
         {
             const personObject = {
                 id: newName,
                 number: newPhone
             }
-            setpersonsList( personsList.concat( personObject ) )
-            setName( '' )
-            setPhone( '' )
+            addData( personObject )
+                .then( response =>
+                {
+                    setPersonsList( personsList.concat( personObject ) )
+                    setName( '' )
+                    setPhone( '' )
+                } )
         }
     }
 
-    const newLocal = <form onSubmit={ addPersonAndNumber }>
-        <div style={ { padding: 10 } }>
-            Nimi: <input value={ newName } onChange={ handlePersonsChange } />
-        </div>
-        <div style={ { padding: 10 } }>
-            Puhelinnumero: <input value={ newPhone } onChange={ handlePhoneChange } />
-        </div>
-        <div>
-            <br></br>
-            <button type="submit">Lisää</button>
-        </div>
-    </form>
+    function deletePerson ( id )
+    {
+        deleteData( id )
+            .then( setPersonsList( personsList.filter( person => person.id !== id ) ) )
+    }
+
+
     // Refaktoroi komponentit omiin tiedostoihin
     return (
         <div>
             <h2>Puhelinluettelo</h2>
+            <h3>Hae henkilöä</h3>
             <Filter
                 filterValue={ filterValue }
                 handleFilterChange={ handleFilterChange }
             />
+            <h3>Lisää henkilö</h3>
             <Inputs
                 addPersonAndNumber={ addPersonAndNumber }
                 newName={ newName }
@@ -107,9 +130,10 @@ const App = () =>
             />
             <h2>Numerot</h2>
             <ul>
-                <FilteredRows
+                <PersonsList
                     filterValue={ filterValue }
                     filteredRows={ filteredRows }
+                    deletePerson={ deletePerson }
                 />
             </ul>
         </div>

@@ -1,9 +1,11 @@
 import React from 'react'
 import Person from './Person'
 import Filter from './Filter'
+import deleteData from '../services/deleteData'
+
 
 //TOIMII - ÄLÄ KOSKE
-const FilteredRows = ( props ) =>
+const PersonsList = ( props ) =>
 {
     console.log( 'Filtered rows propsit: ', props )
     return props.filteredRows.filter( person =>
@@ -17,9 +19,12 @@ const FilteredRows = ( props ) =>
 
                     //Tämä sisältö näytetään
                     person={ filteredPerson }
+
+                    //Rekisteröidään nappula id:n avulla tälle objektille
+                    deletePerson={ () => props.deletePerson( filteredPerson.id ) }
                 />
             )
         } )
 }
 
-export default FilteredRows
+export default PersonsList
