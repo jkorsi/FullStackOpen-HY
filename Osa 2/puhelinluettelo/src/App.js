@@ -23,9 +23,11 @@ const App = () =>
     const [ newPhone, setPhone ] = useState( '' )
     const [ filterValue, setFilter ] = useState( '' )
     const [ errorMessage, setErrorMessage ] = useState( null )
+    const [ isSuccess, setSuccess ] = useState( true )
 
     const filteredRows = personsList
     const personsLink = 'http://localhost:3300/persons'
+
 
     //Efekti, jolla noudetaan henkilölista ja asetetaan se tilamuuttujaan
     const hook = () =>
@@ -59,7 +61,7 @@ const App = () =>
     }
 
     // TOIMII - ÄLÄ KOSKE 
-    const addPersonAndNumber = ( event ) =>
+    const addOrUpdatePerson = ( event ) =>
     {
         event.preventDefault()
 
@@ -67,28 +69,7 @@ const App = () =>
         {
             if ( window.confirm( `Henkilö ${ newName } on jo olemassa. Päivitetäänkö numero?` ) )
             {
-                //const person = personsList.filter( person => person.id.toLowerCase() === newName.toLowerCase() )
-                const id = newName
-                const url = `http://localhost:3300/persons/${ id }`
-                const personToUpdate = personsList.find( person => person.id === id )
-                console.log( personToUpdate )
-                const changedPerson = { ...personToUpdate, number: newPhone }
-                console.log( changedPerson )
-
-                updateData( id, changedPerson )
-                    .then( changedPerson =>
-                    {
-                        setPersonsList( personsList.map( person => person.id !== id ? person : changedPerson ) )
-                        setName( '' )
-                        setPhone( '' )
-                        throwMessage( `Henkilön ${ id } numero päivitetty.` )
-                    } )
-                    .catch( error =>
-                    {
-                        alert( `Henkilö ${ id } on poistettu palvelimelta. :( Kokeile lisätä henkilö uudelleen!` )
-                        setPersonsList( personsList.map( person => person.id !== id ) )
-                    } )
-
+                updatePerson()
             }
         } else
         {
@@ -99,6 +80,7 @@ const App = () =>
             addData( personObject )
                 .then( response =>
                 {
+                    setSuccess( true )
                     setPersonsList( personsList.concat( personObject ) )
                     setName( '' )
                     setPhone( '' )
@@ -107,8 +89,34 @@ const App = () =>
         }
     }
 
+    function updatePerson ()
+    {
+        const id = newName
+        const url = `http://localhost:3300/persons/${ id }`
+        const personToUpdate = personsList.find( person => person.id === id )
+        console.log( personToUpdate )
+        const changedPerson = { ...personToUpdate, number: newPhone }
+        console.log( changedPerson )
+        updateData( id, changedPerson )
+            .then( changedPerson =>
+            {
+                setSuccess( true )
+                setPersonsList( personsList.map( person => person.id !== id ? person : changedPerson ) )
+                setName( '' )
+                setPhone( '' )
+                throwMessage( `Henkilön ${ id } numero päivitetty.` )
+            } )
+            .catch( error =>
+            {
+                setSuccess( false )
+                throwMessage( `Henkilö ${ id } on poistettu palvelimelta. :( Kokeile lisätä henkilö uudelleen!` )
+                setPersonsList( personsList.filter( person => person.id !== id ) )
+            } )
+    }
+
     function deletePerson ( id )
     {
+        setSuccess( true )
         deleteData( id )
             .then( setPersonsList( personsList.filter( person => person.id !== id ) ) )
 
@@ -118,7 +126,7 @@ const App = () =>
     function throwMessage ( errorParam )
     {
         setErrorMessage(
-            `${ errorParam }`
+            ( `${ errorParam }` )
         )
         setTimeout( () =>
         {
@@ -132,7 +140,10 @@ const App = () =>
     return (
         <div>
             <h2>Puhelinluettelo</h2>
-            <Notification message={ errorMessage } />
+            <Notification
+                message={ errorMessage }
+                isSuccess={ isSuccess }
+            />
 
             <h3>Hae henkilöä</h3>
             <Filter
@@ -141,7 +152,7 @@ const App = () =>
             />
             <h3>Lisää henkilö</h3>
             <Inputs
-                addPersonAndNumber={ addPersonAndNumber }
+                addPersonAndNumber={ addOrUpdatePerson }
                 newName={ newName }
                 handlePersonsChange={ handlePersonsChange }
                 newPhone={ newPhone }
@@ -160,3 +171,5 @@ const App = () =>
 }
 
 export default App
+
+
