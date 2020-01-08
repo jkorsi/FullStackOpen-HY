@@ -8,6 +8,7 @@ import getAll from './services/getData'
 import addData from './services/addData'
 import deleteData from './services/deleteData'
 import updateData from './services/updateData'
+import Notification from './components/Notification'
 
 import axios from 'axios'
 
@@ -16,12 +17,12 @@ import './App.css';
 
 const App = () =>
 {
-
     // Tilamuuttujat
     const [ personsList, setPersonsList ] = useState( [] )
     const [ newName, setName ] = useState( '' )
     const [ newPhone, setPhone ] = useState( '' )
     const [ filterValue, setFilter ] = useState( '' )
+    const [ errorMessage, setErrorMessage ] = useState( null )
 
     const filteredRows = personsList
     const personsLink = 'http://localhost:3300/persons'
@@ -80,6 +81,7 @@ const App = () =>
                         setPersonsList( personsList.map( person => person.id !== id ? person : changedPerson ) )
                         setName( '' )
                         setPhone( '' )
+                        throwMessage( `Henkilön ${ id } numero päivitetty.` )
                     } )
                     .catch( error =>
                     {
@@ -100,6 +102,7 @@ const App = () =>
                     setPersonsList( personsList.concat( personObject ) )
                     setName( '' )
                     setPhone( '' )
+                    throwMessage( `Henkilö ${ personObject.id } lisätty` )
                 } )
         }
     }
@@ -108,6 +111,20 @@ const App = () =>
     {
         deleteData( id )
             .then( setPersonsList( personsList.filter( person => person.id !== id ) ) )
+
+        throwMessage( `Poistettiin henkilö ${ id }` )
+    }
+
+    function throwMessage ( errorParam )
+    {
+        setErrorMessage(
+            `${ errorParam }`
+        )
+        setTimeout( () =>
+        {
+            setErrorMessage( null )
+        }, 5000 )
+
     }
 
 
@@ -115,6 +132,8 @@ const App = () =>
     return (
         <div>
             <h2>Puhelinluettelo</h2>
+            <Notification message={ errorMessage } />
+
             <h3>Hae henkilöä</h3>
             <Filter
                 filterValue={ filterValue }

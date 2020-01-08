@@ -1,4 +1,4 @@
-body {
+/* body {
   margin: 5;
   padding: 55;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -21,4 +21,14 @@ ul {
   margin-left: 10;
   margin-right: 0;
   padding-left: 40px;
+} */
+
+.error {
+  color: green;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
