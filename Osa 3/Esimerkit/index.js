@@ -66,7 +66,7 @@ app.get('/api/notes/:id', (request, response) =>
 app.get('/api/notes', (request, response) =>
 {
     console.log("request headers", request.headers)
-    res.json(notes)
+    response.json(notes)
     console.log("notes get: ", notes)
 })
 
