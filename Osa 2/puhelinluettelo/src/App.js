@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react'
 
 import Filter from './components/Filter'
 import PersonsList from './components/PersonsList'
@@ -10,128 +10,131 @@ import deleteData from './services/deleteData'
 import updateData from './services/updateData'
 import Notification from './components/Notification'
 
-import axios from 'axios'
-
+import express from 'express'
 import './App.css';
-
 
 const App = () =>
 {
     // Tilamuuttujat
-    const [ personsList, setPersonsList ] = useState( [] )
-    const [ newName, setName ] = useState( '' )
-    const [ newPhone, setPhone ] = useState( '' )
-    const [ filterValue, setFilter ] = useState( '' )
-    const [ errorMessage, setErrorMessage ] = useState( null )
-    const [ isSuccess, setSuccess ] = useState( true )
+    const [personsList, setPersonsList] = useState([])
+    const [newName, setName] = useState('')
+    const [newPhone, setPhone] = useState('')
+    const [filterValue, setFilter] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [isSuccess, setSuccess] = useState(true)
 
     const filteredRows = personsList
-    const personsLink = 'http://localhost:3300/persons'
+    const baseUrl = '/api/persons/'
 
 
     //Efekti, jolla noudetaan henkilölista ja asetetaan se tilamuuttujaan
     const hook = () =>
     {
         getAll()
-            .then( initialPersons =>
+            .then(initialPersons =>
             {
-                console.log( 'Promise fulfilled' )
-                setPersonsList( initialPersons )
-            } )
+                console.log('Promise fulfilled')
+                console.log(initialPersons)
+                setPersonsList(initialPersons)
+            })
     }
 
-    useEffect( hook, [] )
+    useEffect(hook, [])
 
     // TOIMII - ÄLÄ KOSKE 
-    const handlePersonsChange = ( event ) =>
+    const handlePersonsChange = (event) =>
     {
-        setName( event.target.value )
+        setName(event.target.value)
     }
 
     // TOIMII - ÄLÄ KOSKE 
-    const handlePhoneChange = ( event ) =>
+    const handlePhoneChange = (event) =>
     {
-        setPhone( event.target.value )
+        setPhone(event.target.value)
     }
 
     //TOIMII - ÄLÄ KOSKE
-    const handleFilterChange = ( event ) =>
+    const handleFilterChange = (event) =>
     {
-        setFilter( event.target.value )
+        setFilter(event.target.value)
     }
 
     // TOIMII - ÄLÄ KOSKE 
-    const addOrUpdatePerson = ( event ) =>
+    const addOrUpdatePerson = (event) =>
     {
         event.preventDefault()
 
-        if ( personsList.filter( person => person.id.toLowerCase() === newName.toLowerCase() ).length > 0 )
+        if (personsList.filter(person => person.name.toLowerCase() === newName.toLowerCase()).length > 0)
         {
-            if ( window.confirm( `Henkilö ${ newName } on jo olemassa. Päivitetäänkö numero?` ) )
+            if (window.confirm(`Henkilö ${newName} on jo olemassa. Päivitetäänkö numero?`))
             {
                 updatePerson()
             }
         } else
         {
             const personObject = {
-                id: newName,
+                name: newName,
                 number: newPhone
             }
-            addData( personObject )
-                .then( response =>
+            addData(personObject)
+                .then(response =>
                 {
-                    setSuccess( true )
-                    setPersonsList( personsList.concat( personObject ) )
-                    setName( '' )
-                    setPhone( '' )
-                    throwMessage( `Henkilö ${ personObject.id } lisätty` )
-                } )
+                    setSuccess(true)
+                    setPersonsList(personsList.concat(personObject))
+                    setName('')
+                    setPhone('')
+                    throwMessage(`Henkilö ${personObject.name} lisätty`)
+                })
         }
     }
 
-    function updatePerson ()
+    function updatePerson()
     {
-        const id = newName
-        const url = `http://localhost:3300/persons/${ id }`
-        const personToUpdate = personsList.find( person => person.id === id )
-        console.log( personToUpdate )
-        const changedPerson = { ...personToUpdate, number: newPhone }
-        console.log( changedPerson )
-        updateData( id, changedPerson )
-            .then( changedPerson =>
+        const name = newName
+
+        const personToUpdate = personsList.find(person => person.name === name)
+        const id = personToUpdate.id
+
+        const url = `${baseUrl}${id}`
+
+        console.log(personToUpdate)
+        const changedPerson = {...personToUpdate, number: newPhone}
+        console.log(changedPerson)
+        updateData(id, changedPerson)
+            .then(changedPerson =>
             {
-                setSuccess( true )
-                setPersonsList( personsList.map( person => person.id !== id ? person : changedPerson ) )
-                setName( '' )
-                setPhone( '' )
-                throwMessage( `Henkilön ${ id } numero päivitetty.` )
-            } )
-            .catch( error =>
+                setSuccess(true)
+                setPersonsList(personsList.map(person => person.id !== id ? person : changedPerson))
+                setName('')
+                setPhone('')
+                throwMessage(`Henkilön ${name} numero päivitetty.`)
+            })
+            .catch(error =>
             {
-                setSuccess( false )
-                throwMessage( `Henkilö ${ id } on poistettu palvelimelta. :( Kokeile lisätä henkilö uudelleen!` )
-                setPersonsList( personsList.filter( person => person.id !== id ) )
-            } )
+                setSuccess(false)
+                throwMessage(`Henkilö ${name} on poistettu palvelimelta. :( Kokeile lisätä henkilö uudelleen!`)
+                setPersonsList(personsList.filter(person => person.id !== id))
+            })
     }
 
-    function deletePerson ( id )
+    function deletePerson(id)
     {
-        setSuccess( true )
-        deleteData( id )
-            .then( setPersonsList( personsList.filter( person => person.id !== id ) ) )
+        setSuccess(true)
+        deleteData(id)
+            .then(setPersonsList(personsList.filter(person => person.id !== id)))
 
-        throwMessage( `Poistettiin henkilö ${ id }` )
+        throwMessage(`Poistettiin henkilö ${id}`)
     }
 
-    function throwMessage ( errorParam )
+    function throwMessage(errorParam)
     {
         setErrorMessage(
-            ( `${ errorParam }` )
+            (`${errorParam}`)
         )
-        setTimeout( () =>
+        setTimeout(() =>
         {
-            setErrorMessage( null )
-        }, 5000 )
+            setErrorMessage(null)
+        }, 5000)
 
     }
 
@@ -141,29 +144,29 @@ const App = () =>
         <div>
             <h2>Puhelinluettelo</h2>
             <Notification
-                message={ errorMessage }
-                isSuccess={ isSuccess }
+                message={errorMessage}
+                isSuccess={isSuccess}
             />
 
             <h3>Hae henkilöä</h3>
             <Filter
-                filterValue={ filterValue }
-                handleFilterChange={ handleFilterChange }
+                filterValue={filterValue}
+                handleFilterChange={handleFilterChange}
             />
             <h3>Lisää henkilö</h3>
             <Inputs
-                addPersonAndNumber={ addOrUpdatePerson }
-                newName={ newName }
-                handlePersonsChange={ handlePersonsChange }
-                newPhone={ newPhone }
-                handlePhoneChange={ handlePhoneChange }
+                addPersonAndNumber={addOrUpdatePerson}
+                newName={newName}
+                handlePersonsChange={handlePersonsChange}
+                newPhone={newPhone}
+                handlePhoneChange={handlePhoneChange}
             />
             <h2>Numerot</h2>
             <ul>
                 <PersonsList
-                    filterValue={ filterValue }
-                    filteredRows={ filteredRows }
-                    deletePerson={ deletePerson }
+                    filterValue={filterValue}
+                    filteredRows={filteredRows}
+                    deletePerson={deletePerson}
                 />
             </ul>
         </div>

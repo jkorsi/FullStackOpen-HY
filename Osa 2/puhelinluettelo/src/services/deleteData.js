@@ -1,21 +1,21 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3300/persons'
+const baseUrl = '/api/persons'
 
 const deleteData = id =>
 {
-    if ( window.confirm( 'Haluatko varmasti poistaa henkilön?' ) )
+    if (window.confirm('Haluatko varmasti poistaa henkilön?'))
     {
 
-        const request = axios.delete( `${ baseUrl }/${ id }` )
+        const request = axios.delete(`${baseUrl}/${id}`)
         return request
-            .then( response => response.data )
-            .catch( error =>
+            .then(response => response.data)
+            .catch(error =>
             {
                 alert(
-                    `The person '${ id }' was already deleted from server`
+                    `The person '${id}' was already deleted from server`
                 )
-            } )
+            })
     }
 }
 

@@ -5,26 +5,28 @@ import deleteData from '../services/deleteData'
 
 
 //TOIMII - ÄLÄ KOSKE
-const PersonsList = ( props ) =>
+const PersonsList = (props) =>
 {
-    console.log( 'Filtered rows propsit: ', props )
-    return props.filteredRows.filter( person =>
-        person.id.toLowerCase().includes( props.filterValue.toLowerCase() ) ).map( filteredPerson =>
+    console.log('Filtered rows propsit: ', props)
+    console.log(props.filteredRows)
+    return props.filteredRows.filter(person =>
+
+        person.name.toLowerCase().includes(props.filterValue.toLowerCase())).map(filteredPerson =>
         {
             return (
                 //Komponentti
                 <Person
                     //Tämän perusteella komponentit erotellaan arrayssa
-                    key={ filteredPerson.id }
+                    key={filteredPerson.id}
 
                     //Tämä sisältö näytetään
-                    person={ filteredPerson }
+                    person={filteredPerson}
 
                     //Rekisteröidään nappula id:n avulla tälle objektille
-                    deletePerson={ () => props.deletePerson( filteredPerson.id ) }
+                    deletePerson={() => props.deletePerson(filteredPerson.id)}
                 />
             )
-        } )
+        })
 }
 
 export default PersonsList

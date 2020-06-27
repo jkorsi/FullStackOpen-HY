@@ -1,7 +1,0 @@
-POST http://localhost:3002/api/notes
-Content-Type: application/json
-
-{
-    "content":"Täytetekstiä API:in REST Clientillä",
-    "important": true
-}
