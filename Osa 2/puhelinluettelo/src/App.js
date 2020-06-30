@@ -3,14 +3,12 @@ import React, {useState, useEffect} from 'react'
 import Filter from './components/Filter'
 import PersonsList from './components/PersonsList'
 import Inputs from './components/Inputs'
-import Person from './components/Person'
 import getAll from './services/getData'
 import addData from './services/addData'
 import deleteData from './services/deleteData'
 import updateData from './services/updateData'
 import Notification from './components/Notification'
 
-import express from 'express'
 import './App.css';
 
 const App = () =>
@@ -24,7 +22,7 @@ const App = () =>
     const [isSuccess, setSuccess] = useState(true)
 
     const filteredRows = personsList
-    const baseUrl = '/api/persons/'
+    const baseUrl = '/api/persons'
 
 
     //Efekti, jolla noudetaan henkilölista ja asetetaan se tilamuuttujaan
